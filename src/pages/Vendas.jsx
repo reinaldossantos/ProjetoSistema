@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
 
-export default function Vendas() {
+function Vendas() {
   // 1. ESTADOS (Dados e Formulário)
   const [vendas, setVendas] = useState([])
   const [clientes, setClientes] = useState([])
@@ -208,3 +208,5 @@ export default function Vendas() {
     </div>
   )
 }
+
+export default Vendas

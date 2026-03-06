@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
 
-export default function Produtos() {
+function Produtos() {
   const [produtos, setProdutos] = useState([])
   const [nome, setNome] = useState('')
   const [estoque, setEstoque] = useState('')
@@ -121,3 +121,5 @@ export default function Produtos() {
     </div>
   )
 }
+
+export default Produtos
