@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import Clientes from './Clientes'
-import Vendas from './Vendas' // Importação do componente que você criou
+import Vendas from './Vendas'
+// import Vendas from './Vendas' // Importação do componente que você criou
 
 export default function Dashboard({ session }) {
   const [abaAtiva, setAbaAtiva] = useState('clientes')
