@@ -1,105 +1,222 @@
-import { useEffect, useState, useCallback } from 'react'
+// import { useEffect, useState } from 'react'
+// import { supabase } from '../supabaseClient'
+
+// export default function Clientes() {
+//   const [clientes, setClientes] = useState([])
+//   const [nome, setNome] = useState('')
+//   const [loading, setLoading] = useState(true)
+
+//   // Busca os clientes no banco de dados ao carregar a página
+//   useEffect(() => {
+//     buscarClientes()
+//   }, [])
+
+//   async function buscarClientes() {
+//     setLoading(true)
+//     try {
+//       const { data, error } = await supabase
+//         .from('clientes')
+//         .select('*')
+//         .order('id', { ascending: false })
+
+//       if (error) throw error
+//       setClientes(data || [])
+//     } catch (error) {
+//       console.error('Erro ao carregar clientes:', error.message)
+//     } finally {
+//       setLoading(false)
+//     }
+//   }
+
+//   async function adicionarCliente(e) {
+//     e.preventDefault()
+//     if (!nome.trim()) return
+
+//     try {
+//       const { error } = await supabase
+//         .from('clientes')
+//         .insert([{ nome: nome.trim() }])
+
+//       if (error) throw error
+      
+//       setNome('')
+//       buscarClientes() // Atualiza a lista automaticamente após inserir
+//     } catch (error) {
+//       alert('Erro ao salvar: ' + error.message)
+//     }
+//   }
+
+//   return (
+//     <div className="space-y-6 animate-fadeIn">
+//       {/* Bloco de Cadastro */}
+//       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+//         <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">
+//           Cadastrar Novo Cliente
+//         </h3>
+//         <form onSubmit={adicionarCliente} className="flex gap-3">
+//           <input
+//             type="text"
+//             placeholder="Nome Completo"
+//             className="flex-1 p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 transition-all"
+//             value={nome}
+//             onChange={(e) => setNome(e.target.value)}
+//           />
+//           <button 
+//             type="submit"
+//             className="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md active:scale-95"
+//           >
+//             SALVAR
+//           </button>
+//         </form>
+//       </div>
+
+//       {/* Tabela de Dados */}
+//       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+//         <table className="w-full text-left border-collapse">
+//           <thead className="bg-slate-50 border-b border-gray-200">
+//             <tr>
+//               <th className="p-4 font-bold text-slate-600 text-sm uppercase">ID</th>
+//               <th className="p-4 font-bold text-slate-600 text-sm uppercase">Nome do Cliente</th>
+//               <th className="p-4 font-bold text-slate-600 text-sm uppercase">Data de Registro</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {loading ? (
+//               <tr>
+//                 <td colSpan="3" className="p-12 text-center">
+//                   <div className="flex flex-col items-center gap-2">
+//                     <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+//                     <span className="text-gray-400 font-medium">Buscando informações...</span>
+//                   </div>
+//                 </td>
+//               </tr>
+//             ) : clientes.length === 0 ? (
+//               <tr>
+//                 <td colSpan="3" className="p-12 text-center text-gray-400">
+//                   Nenhum registro encontrado no banco de dados.
+//                 </td>
+//               </tr>
+//             ) : (
+//               clientes.map((c) => (
+//                 <tr key={c.id} className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors">
+//                   <td className="p-4 text-gray-400 font-mono text-xs">#{c.id}</td>
+//                   <td className="p-4 font-bold text-slate-700">{c.nome}</td>
+//                   <td className="p-4 text-gray-500 text-sm">
+//                     {new Date(c.created_at).toLocaleDateString('pt-BR')}
+//                   </td>
+//                 </tr>
+//               ))
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   )
+// }
+
+/*--------------------------------------------------------------------*/
+
+import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 
-export default function Clientes({ userRole }) {
+export default function Clientes() {
   const [clientes, setClientes] = useState([])
   const [nome, setNome] = useState('')
+  const [documento, setDocumento] = useState('')
+  const [loading, setLoading] = useState(true)
 
-  // 1. Usamos o useCallback para que a função seja memorizada e reconhecida pelo useEffect
-  const fetchClientes = useCallback(async () => {
+  useEffect(() => {
+    buscarClientes()
+  }, [])
+
+  async function buscarClientes() {
+    setLoading(true)
     try {
       const { data, error } = await supabase
         .from('clientes')
         .select('*')
-        .order('nome', { ascending: true })
-      
+        .order('id', { ascending: false })
+
       if (error) throw error
-      if (data) setClientes(data)
+      setClientes(data || [])
     } catch (error) {
-      console.error("Erro ao carregar lista:", error.message)
+      console.error('Erro:', error.message)
+    } finally {
+      setLoading(false)
     }
-  }, [])
+  }
 
-  // 2. O useEffect agora chama a função memorizada sem erros de referência
-  useEffect(() => {
-    fetchClientes()
-  }, [fetchClientes])
-
-  // 3. Função para adicionar cliente
-  const handleAdd = async (e) => {
+  async function adicionarCliente(e) {
     e.preventDefault()
     if (!nome.trim()) return
 
     try {
-      const { error } = await supabase.from('clientes').insert([{ nome }])
+      const { error } = await supabase
+        .from('clientes')
+        .insert([{ nome: nome.trim(), documento: documento.trim() }])
+
       if (error) throw error
       
       setNome('')
-      fetchClientes()
+      setDocumento('')
+      buscarClientes()
     } catch (error) {
-      alert("Erro ao cadastrar: " + error.message)
-    }
-  }
-
-  // 4. Função para excluir (apenas se for admin)
-  const handleDelete = async (id) => {
-    if (userRole !== 'admin') {
-      alert("Permissão negada: Apenas administradores podem excluir.")
-      return
-    }
-
-    try {
-      const { error } = await supabase.from('clientes').delete().eq('id', id)
-      if (error) throw error
-      fetchClientes()
-    } catch (error) {
-      alert("Erro ao excluir: " + error.message)
+      alert('Erro ao salvar: ' + error.message)
     }
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Gerenciamento de Clientes</h2>
-      
-      {/* Formulário de Cadastro */}
-      <form onSubmit={handleAdd} className="flex gap-2 mb-8 bg-white p-4 rounded-lg shadow-sm border">
-        <input 
-          className="flex-1 border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-          placeholder="Digite o nome do cliente..."
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
-        <button 
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold transition-all"
-        >
-          Cadastrar
-        </button>
-      </form>
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h3 className="text-lg font-bold text-slate-800 mb-4 uppercase tracking-wider">Novo Cadastro</h3>
+        <form onSubmit={adicionarCliente} className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <input
+            type="text"
+            placeholder="Nome do Cliente"
+            className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="CPF / CNPJ"
+            className="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+            value={documento}
+            onChange={(e) => setDocumento(e.target.value)}
+          />
+          <button type="submit" className="bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all">
+            SALVAR
+          </button>
+        </form>
+      </div>
 
-      {/* Lista de Clientes */}
-      <div className="grid gap-3">
-        {clientes.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">Nenhum cliente encontrado.</p>
-        ) : (
-          clientes.map(cliente => (
-            <div 
-              key={cliente.id} 
-              className="flex justify-between items-center p-4 bg-white shadow-sm rounded-md border border-gray-100 hover:shadow-md transition-shadow"
-            >
-              <span className="text-gray-700 font-medium">{cliente.nome}</span>
-              
-              {userRole === 'admin' && (
-                <button 
-                  onClick={() => handleDelete(cliente.id)}
-                  className="text-red-500 hover:bg-red-50 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-colors border border-red-200"
-                >
-                  Excluir
-                </button>
-              )}
-            </div>
-          ))
-        )}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-50 border-b">
+            <tr>
+              <th className="p-4 font-bold text-slate-600 text-sm">ID</th>
+              <th className="p-4 font-bold text-slate-600 text-sm">NOME</th>
+              <th className="p-4 font-bold text-slate-600 text-sm">DOCUMENTO</th>
+              <th className="p-4 font-bold text-slate-600 text-sm">DATA</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="4" className="p-10 text-center text-gray-400 animate-pulse">Carregando...</td></tr>
+            ) : (
+              clientes.map((c) => (
+                <tr key={c.id} className="border-b hover:bg-gray-50">
+                  <td className="p-4 text-gray-400 text-xs font-mono">#{c.id}</td>
+                  <td className="p-4 font-bold text-slate-700">{c.nome}</td>
+                  <td className="p-4 text-slate-600">{c.documento || '---'}</td>
+                  <td className="p-4 text-gray-500 text-sm">
+                    {c.criado_em ? new Date(c.criado_em).toLocaleDateString('pt-BR') : '---'}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   )

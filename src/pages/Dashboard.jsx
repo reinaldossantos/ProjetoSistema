@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import Clientes from './Clientes'
-// Importe aqui futuramente: import Vendas from './Vendas'
+import Vendas from './Vendas' // Importação do componente que você criou
 
-export default function Dashboard({ session, userRole }) {
+export default function Dashboard({ session }) {
   const [abaAtiva, setAbaAtiva] = useState('clientes')
 
   const handleLogout = async () => {
@@ -11,44 +11,51 @@ export default function Dashboard({ session, userRole }) {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 font-sans text-slate-900">
       {/* Barra Lateral (Sidebar) */}
-      <aside className="w-64 bg-slate-900 text-white flex flex-col">
-        <div className="p-6 text-2xl font-bold border-b border-slate-800 text-blue-400">
-          AgroVida <span className="text-white text-sm block font-normal">Gestão Escolar</span>
+      <aside className="w-64 bg-slate-900 text-white flex flex-col shadow-xl">
+        <div className="p-6 text-xl font-extrabold border-b border-slate-800 tracking-tighter text-blue-400">
+          SISTEMA <span className="text-white font-light text-xs block tracking-normal uppercase">Gestão Administrativa</span>
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
           <button 
             onClick={() => setAbaAtiva('clientes')}
-            className={`w-full text-left p-3 rounded transition ${abaAtiva === 'clientes' ? 'bg-blue-600' : 'hover:bg-slate-800'}`}
+            className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
+              abaAtiva === 'clientes' ? 'bg-blue-600 shadow-lg' : 'hover:bg-slate-800 text-slate-400'
+            }`}
           >
-            👥 Clientes
+            <span className="text-lg">👥</span> Clientes
           </button>
           
           <button 
             onClick={() => setAbaAtiva('vendas')}
-            className={`w-full text-left p-3 rounded transition ${abaAtiva === 'vendas' ? 'bg-blue-600' : 'hover:bg-slate-800'}`}
+            className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
+              abaAtiva === 'vendas' ? 'bg-blue-600 shadow-lg' : 'hover:bg-slate-800 text-slate-400'
+            }`}
           >
-            💰 Vendas
+            <span className="text-lg">💰</span> Vendas
           </button>
 
-          {/* Item visível apenas para Admin */}
-          {userRole === 'admin' && (
-            <button 
-              onClick={() => setAbaAtiva('relatorios')}
-              className={`w-full text-left p-3 rounded transition border-t border-slate-700 mt-4 ${abaAtiva === 'relatorios' ? 'bg-purple-600' : 'hover:bg-slate-800 text-purple-300'}`}
-            >
-              📊 Relatórios Admin
-            </button>
-          )}
+          <button 
+            onClick={() => setAbaAtiva('financeiro')}
+            className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
+              abaAtiva === 'financeiro' ? 'bg-blue-600 shadow-lg' : 'hover:bg-slate-800 text-slate-400'
+            }`}
+          >
+            <span className="text-lg">📊</span> Financeiro
+          </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
-          <p className="text-xs text-slate-400 mb-2 truncate">{session.user.email}</p>
+        {/* Rodapé da Sidebar */}
+        <div className="p-4 border-t border-slate-800 bg-slate-950/50">
+          <div className="mb-3 px-2">
+            <p className="text-[10px] uppercase text-slate-500 font-bold">Usuário Atual</p>
+            <p className="text-xs text-blue-300 truncate font-medium">{session?.user?.email}</p>
+          </div>
           <button 
             onClick={handleLogout}
-            className="w-full bg-red-500/10 text-red-500 p-2 rounded hover:bg-red-500 hover:text-white transition"
+            className="w-full bg-red-500/10 text-red-500 p-2.5 rounded-lg border border-red-500/20 hover:bg-red-600 hover:text-white transition-all duration-300 font-bold text-xs uppercase"
           >
             Sair do Sistema
           </button>
@@ -56,23 +63,28 @@ export default function Dashboard({ session, userRole }) {
       </aside>
 
       {/* Área de Conteúdo Dinâmico */}
-      <main className="flex-1 overflow-y-auto">
-        <header className="bg-white shadow-sm p-4 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-700 uppercase">
-            {abaAtiva}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <header className="bg-white border-b border-gray-200 p-5 flex justify-between items-center shadow-sm">
+          <h2 className="text-xl font-bold text-slate-800 uppercase tracking-tight">
+            Painel / {abaAtiva}
           </h2>
-          <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase">
-            Perfil: {userRole}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span className="text-xs font-bold text-gray-500 uppercase">Sistema Online</span>
+          </div>
         </header>
 
-        <section className="p-4">
-          {abaAtiva === 'clientes' && <Clientes userRole={userRole} />}
-          {abaAtiva === 'vendas' && (
-            <div className="p-20 text-center text-gray-400">Tela de Vendas em desenvolvimento...</div>
-          )}
-          {abaAtiva === 'relatorios' && (
-            <div className="p-20 text-center text-gray-400">Tela de Relatórios em desenvolvimento...</div>
+        <section className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          {/* Lógica de troca de abas */}
+          {abaAtiva === 'clientes' && <Clientes />}
+          
+          {abaAtiva === 'vendas' && <Vendas />}
+
+          {abaAtiva === 'financeiro' && (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <span className="text-5xl mb-4">📈</span>
+              <p className="text-lg font-medium">Módulo Financeiro em desenvolvimento...</p>
+            </div>
           )}
         </section>
       </main>
