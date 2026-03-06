@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import Clientes from './Clientes'
 import Vendas from './Vendas'
-// import Vendas from './Vendas' // Importação do componente que você criou
+import Produtos from './Produtos'
+import Financeiro from './Financeiro'
+
 
 export default function Dashboard({ session }) {
   const [abaAtiva, setAbaAtiva] = useState('clientes')
@@ -20,6 +22,7 @@ export default function Dashboard({ session }) {
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
+          {/* Menu Clientes */}
           <button 
             onClick={() => setAbaAtiva('clientes')}
             className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
@@ -29,6 +32,7 @@ export default function Dashboard({ session }) {
             <span className="text-lg">👥</span> Clientes
           </button>
           
+          {/* Menu Vendas */}
           <button 
             onClick={() => setAbaAtiva('vendas')}
             className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
@@ -38,6 +42,17 @@ export default function Dashboard({ session }) {
             <span className="text-lg">💰</span> Vendas
           </button>
 
+          {/* Menu Produtos/Estoque - Foco no Fabricio */}
+          <button 
+            onClick={() => setAbaAtiva('produtos')}
+            className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
+              abaAtiva === 'produtos' ? 'bg-blue-600 shadow-lg' : 'hover:bg-slate-800 text-slate-400'
+            }`}
+          >
+            <span className="text-lg">📦</span> Stock / Produtos
+          </button>
+
+          {/* Menu Financeiro - Foco na Marcilene e Fabiana */}
           <button 
             onClick={() => setAbaAtiva('financeiro')}
             className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-center gap-3 ${
@@ -50,8 +65,8 @@ export default function Dashboard({ session }) {
 
         {/* Rodapé da Sidebar */}
         <div className="p-4 border-t border-slate-800 bg-slate-950/50">
-          <div className="mb-3 px-2">
-            <p className="text-[10px] uppercase text-slate-500 font-bold">Usuário Atual</p>
+          <div className="mb-3 px-2 text-center">
+            <p className="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Utilizador</p>
             <p className="text-xs text-blue-300 truncate font-medium">{session?.user?.email}</p>
           </div>
           <button 
@@ -63,11 +78,11 @@ export default function Dashboard({ session }) {
         </div>
       </aside>
 
-      {/* Área de Conteúdo Dinâmico */}
+      {/* Área de Conteúdo Principal */}
       <main className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white border-b border-gray-200 p-5 flex justify-between items-center shadow-sm">
           <h2 className="text-xl font-bold text-slate-800 uppercase tracking-tight">
-            Painel / {abaAtiva}
+            Painel Geral / <span className="text-blue-600">{abaAtiva}</span>
           </h2>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -75,18 +90,12 @@ export default function Dashboard({ session }) {
           </div>
         </header>
 
+        {/* Renderização Condicional dos Módulos */}
         <section className="flex-1 overflow-y-auto p-6 bg-gray-50">
-          {/* Lógica de troca de abas */}
           {abaAtiva === 'clientes' && <Clientes />}
-          
           {abaAtiva === 'vendas' && <Vendas />}
-
-          {abaAtiva === 'financeiro' && (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400">
-              <span className="text-5xl mb-4">📈</span>
-              <p className="text-lg font-medium">Módulo Financeiro em desenvolvimento...</p>
-            </div>
-          )}
+          {abaAtiva === 'produtos' && <Produtos />}
+          {abaAtiva === 'financeiro' && <Financeiro />}
         </section>
       </main>
     </div>
